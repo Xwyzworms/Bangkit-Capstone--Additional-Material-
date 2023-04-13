@@ -49,6 +49,7 @@ dependencies {
     def navigation_version = "2.5.3"
     def okhttp3_version = "4.9.0"
     def room_version = "2.5.0"
+    def camerax_version = "1.2.1"
 
 
     // Circle image
@@ -89,6 +90,15 @@ dependencies {
 
     /// Preferences
     implementation "androidx.datastore:datastore-preferences:1.0.0"
+
+    //CameraX
+    implementation "androidx.camera:camera-core:${camerax_version}"
+    implementation"androidx.camera:camera-lifecycle:${camerax_version}"
+    implementation "androidx.camera:camera-camera2:${camerax_version}"
+    implementation "androidx.camera:camera-video:${camerax_version}"
+    implementation "androidx.camera:camera-view:${camerax_version}"
+    implementation "androidx.camera:camera-extensions:${camerax_version}"
+
 
 
 
