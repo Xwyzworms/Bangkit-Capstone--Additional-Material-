@@ -12,6 +12,9 @@
         android:theme="@style/Theme.ProductSolution"
         tools:targetApi="31">
         <activity
+            android:name=".CameraXActivity"
+            android:exported="false" />
+        <activity
             android:name=".ImageMLStudyCase"
             android:exported="false" />
         <activity

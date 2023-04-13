@@ -4,6 +4,66 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="30dp"
     tools:context=".ImageMLStudyCase">
+
+    <TextView
+
+        android:id="@+id/tvTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:text="Ya itulah ya ges ya"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+
+
+        />
+
+    <ImageView
+
+        android:id="@+id/ivContent"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle"
+        app:layout_constraintStart_toStartOf="@id/tvTitle"
+        app:layout_constraintEnd_toEndOf="@id/tvTitle"
+
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvImageMain"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+
+        app:layout_constraintTop_toBottomOf="@id/ivContent"
+        app:layout_constraintStart_toStartOf="@id/ivContent"
+        app:layout_constraintEnd_toEndOf="@id/ivContent"
+        />
+
+    <Button
+        android:id="@+id/btn_uploadImage"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+
+        android:layout_marginEnd="70dp"
+        app:layout_constraintEnd_toStartOf="@id/btn_takeImage"
+        app:layout_constraintTop_toBottomOf="@id/rvImageMain"
+        app:layout_constraintStart_toStartOf="@id/rvImageMain"
+        />
+    <Button
+        android:id="@+id/btn_takeImage"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+
+        app:layout_constraintTop_toBottomOf="@id/rvImageMain"
+        app:layout_constraintStart_toEndOf="@id/btn_uploadImage"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
