@@ -46,8 +46,9 @@ class CameraXActivity : AppCompatActivity() {
                 val img : Image?= image.image
                 if(img != null)
                 {
-                    //val byteArray : ByteArray = prepareImageByteArray(convertImageToBitmap(AppCompatResources.getDrawable(resources.Drawable)))
-                    val byteArray : ByteArray = prepareImageByteArray(provideDummyBitmap())
+                    val byteArray : ByteArray = prepareImageByteArray(
+                        scaleBitmapDown(convertImageToBitmap(img),320))
+                    //val byteArray : ByteArray = prepareImageByteArray(provideDummyBitmap())
                     sendToLauncher(byteArray)
                 }
                 else
