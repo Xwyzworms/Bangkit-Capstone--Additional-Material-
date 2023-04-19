@@ -1,0 +1,5 @@
+{
+    "name":"name",
+    "imageUrl": "imageUrl", 
+    "description": "req.body.description"
+}
