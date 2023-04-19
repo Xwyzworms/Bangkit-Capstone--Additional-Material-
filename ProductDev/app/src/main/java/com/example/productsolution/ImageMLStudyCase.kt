@@ -28,8 +28,8 @@ class ImageMLStudyCase : AppCompatActivity() {
         defineTakePictureLauncher()
         defineUploadImageLauncher()
     }
-    override fun onCreate(savedInstanceState: Bundle?) {
-
+    override fun onCreate(savedInstanceState: Bundle?)
+    {
 
         super.onCreate(savedInstanceState)
         binding = ActivityImageMlstudyCaseBinding.inflate(layoutInflater)
