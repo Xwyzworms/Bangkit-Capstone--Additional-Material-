@@ -16,4 +16,6 @@ router.delete("/fruite:name", fruitController.deleteFruitByName);
 router.post("/uploadFruit", fruitController.uploadFruitImage);
 router.post("/MLFruit", fruitController.doSomeMLShit);
 
+
+
 module.exports = router;

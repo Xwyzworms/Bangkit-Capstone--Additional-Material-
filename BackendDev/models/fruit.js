@@ -6,5 +6,5 @@ const FruitSchema = new mongoose.Schema({
     description : String
 })
 
-const FruitDum = mongoose.Model('FruitDum', FruitSchema);
+const FruitDum = mongoose.model('FruitDum', FruitSchema);
 module.exports = {FruitDum};
