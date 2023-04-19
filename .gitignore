@@ -1,2 +1,4 @@
 ./ProductDev/gradle.properties
 ./BackendDev/node_modules
+./MachineLearningDev/data/
+
