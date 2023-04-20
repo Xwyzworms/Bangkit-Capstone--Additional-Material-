@@ -21,6 +21,7 @@ import java.nio.ByteBuffer
 class CameraXActivity : AppCompatActivity() {
     private lateinit var binding : ActivityCameraXactivityBinding
     private var imageCaptureUseCase : ImageCapture? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCameraXactivityBinding.inflate(layoutInflater)
@@ -97,7 +98,9 @@ class CameraXActivity : AppCompatActivity() {
         // Bind it to lifeCycle
 
         val cameraProviderFuture : ListenableFuture<ProcessCameraProvider> = ProcessCameraProvider.getInstance(this)
+
         cameraProviderFuture.addListener({
+
             val cameraProvider :ProcessCameraProvider = cameraProviderFuture.get()
 
             // Define the previewUseCase
@@ -113,7 +116,7 @@ class CameraXActivity : AppCompatActivity() {
                 //Unbind all useCases, sebelum rebind
                 cameraProvider.unbindAll()
                 //Bind to lifecycler
-                cameraProvider.bindToLifecycle(this, cameraSelector, previewUseCase, imageCaptureUseCase)
+                cameraProvider.bindToLifecycle(this, cameraSelector, previewUseCase, imageCaptureUseCase )
 
             }
             catch (e : Exception)
