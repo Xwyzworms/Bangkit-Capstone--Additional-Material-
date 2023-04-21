@@ -12,10 +12,14 @@ import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.gpu.CompatibilityList
 import org.tensorflow.lite.gpu.GpuDelegate
 import org.tensorflow.lite.nnapi.NnApiDelegate
-import java.io.File
 import android.graphics.Bitmap
+import android.provider.ContactsContract.Data
+import android.util.Log
+import android.widget.Toast
 import org.tensorflow.lite.DataType
+import org.tensorflow.lite.schema.TensorType
 import org.tensorflow.lite.support.common.TensorProcessor
+import org.tensorflow.lite.support.common.ops.CastOp
 import org.tensorflow.lite.support.common.ops.DequantizeOp
 import org.tensorflow.lite.support.common.ops.NormalizeOp
 import org.tensorflow.lite.support.common.ops.QuantizeOp
@@ -23,7 +27,11 @@ import org.tensorflow.lite.support.image.ImageProcessor
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.image.ops.ResizeOp
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
+import java.io.FileInputStream
 import java.io.InputStream
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+import java.nio.channels.FileChannel
 
 class ImageClassifierRaw(private var context : Context,
                          private var modelPath : String,
@@ -45,10 +53,10 @@ class ImageClassifierRaw(private var context : Context,
     *   6. Mapped the output to correct labels
     * */
     private lateinit var interpreter : Interpreter
-    private lateinit var predictionsBuffer : TensorBuffer
     private lateinit var associatedLabels : List<String>
     private lateinit var imageProcessor : ImageProcessor
     private var assetManager : AssetManager = context.assets
+
     private val interpreterOptions : Interpreter.Options = Interpreter.Options()
     init {
 
@@ -100,40 +108,33 @@ class ImageClassifierRaw(private var context : Context,
             }
 
         }
+        interpreterOptions.setNumThreads(5)
     }
 
-    fun setupPredictionBuffer()
-    {
-        predictionsBuffer = if(isQuantizedModel)
-        {
-            TensorBuffer.createFixedSize(outputSize, DataType.UINT8)
-        }
-        else
-        {
-            TensorBuffer.createFixedSize(outputSize, DataType.FLOAT32)
-        }
-    }
+
     fun setupImageProcessor()
     {
-        if(isQuantizedModel)
-        {
-            imageProcessor = ImageProcessor.Builder()
+        imageProcessor = if(isQuantizedModel) {
+            ImageProcessor.Builder()
                 .add(ResizeOp(inputSize.height, inputSize.width, ResizeOp.ResizeMethod.BILINEAR))
                 .add(NormalizeOp(0f, 255f))
-                .add(QuantizeOp(999f,999f))
+                .add(QuantizeOp(mobileNet_InputZeropoints, mobileNet_InputScales))
+                .add(CastOp(DataType.UINT8))
                 .build()
-        }
-        else
-        {
-            imageProcessor = ImageProcessor.Builder()
+        } else {
+            ImageProcessor.Builder()
                 .add(ResizeOp(inputSize.height, inputSize.width, ResizeOp.ResizeMethod.BILINEAR))
-                .add(NormalizeOp(0f,255f)).build()
+                .add(NormalizeOp(0f,255f))
+                .add(CastOp(DataType.FLOAT32))
+                .build()
         }
 
     }
-    private fun handlerPredictionBuffer() : List<DefaultCategoryImageClassification>
+    private fun handlerPredictionBuffer(predBuffer: FloatArray) : List<DefaultCategoryImageClassification>
     {
-        val predictionResults = predictionsBuffer.floatArray
+
+        // Later, i need to understand a bc d e f g first
+        //
         // TODO later
         /*
         * 1. Get resutls from predictions
@@ -142,31 +143,61 @@ class ImageClassifierRaw(private var context : Context,
         * */
         return arrayListOf()
     }
+
+    private fun scaledBitmap(bitmap: Bitmap): ByteBuffer {
+        val scaledBitmap: Bitmap =
+            Bitmap.createScaledBitmap(bitmap, inputSize.width, inputSize.height, false)
+        return convertToByteBuffer(scaledBitmap)
+    }
+
+    private fun convertToByteBuffer(bitmap: Bitmap) : ByteBuffer
+    {
+        val byteBuffer : ByteBuffer = ByteBuffer.allocateDirect( inputSize.width* inputSize.height * 3)
+        byteBuffer.order(ByteOrder.nativeOrder())
+
+        val intValues = IntArray(inputSize.height * inputSize.width)
+
+        bitmap.getPixels(intValues, 0,bitmap.width, 0 , 0 ,bitmap.width, bitmap.height)
+        var pixel = 0
+        for (i in 0 until inputSize.width) {
+            for (j in 0 until inputSize.height) {
+                val input = intValues[pixel++]
+
+                byteBuffer.put(((input shr 16) and 0xFF).toByte())
+                byteBuffer.put(((input shr 8) and 0xFF).toByte())
+                byteBuffer.put((input and 0xFF).toByte())
+            }
+        }
+        return byteBuffer
+    }
     fun classifyImage(bitmap : Bitmap) : List<DefaultCategoryImageClassification>
     {
         setupImageProcessor()
-        setupPredictionBuffer()
-        val inputTensorImage : TensorImage = TensorImage(DataType.FLOAT32)
-        inputTensorImage.load(bitmap)
+        var tensorImage = if(isQuantizedModel) TensorImage(DataType.UINT8) else TensorImage(DataType.FLOAT32)
+
+        tensorImage.load(bitmap)
+        tensorImage = imageProcessor.process(tensorImage)
 
         if(isQuantizedModel)
         {
             val tensorProcessor = TensorProcessor.Builder()
-                .add(DequantizeOp(999f, 999f))
+                .add(DequantizeOp(mobileNet_OutputZeropoints, mobileNet_OutputScales))
                 .build()
 
-            predictionsBuffer = tensorProcessor.process(predictionsBuffer)
-        }else
-        {
-            interpreter.run(inputTensorImage.buffer, predictionsBuffer)
+           // predictionsBuffer = tensorProcessor.process(predictionsBuffer)
         }
-
-        val arrayOfResults : List<DefaultCategoryImageClassification> = handlerPredictionBuffer()
+        var predictionBuffer = TensorBuffer.createFixedSize(outputSize, DataType.UINT8)
+            interpreter.run(tensorImage.buffer, predictionBuffer.buffer )
+        val arrayOfResults : List<DefaultCategoryImageClassification> = handlerPredictionBuffer(predictionBuffer.floatArray)
         return arrayOfResults
     }
     private fun setupModel()
     {
-        interpreter = Interpreter(File(modelPath), interpreterOptions)
+        val fileDescriptor = assetManager.openFd(modelPath)
+        val inputStream = FileInputStream(fileDescriptor.fileDescriptor)
+        val fileChannel = inputStream.channel
+        interpreter = Interpreter(fileChannel.map(FileChannel.MapMode.READ_ONLY, fileDescriptor.startOffset, fileDescriptor.declaredLength),interpreterOptions)
+
     }
 
     private fun setupLabel()
@@ -182,5 +213,11 @@ class ImageClassifierRaw(private var context : Context,
         const val DELEGATE_CPU = 0 ;
         const val DELEGATE_GPU = 1;
         const val DELEGATE_NNAPI = 2;
+
+        const val mobileNet_InputScales : Float = 0.0078125f
+        const val mobileNet_InputZeropoints : Float = 128f
+
+        const val mobileNet_OutputScales : Float = 0.00390625f
+        const val mobileNet_OutputZeropoints : Float = 0f
     }
 }

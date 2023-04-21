@@ -115,7 +115,8 @@ class ImageClassifierModelTaskVision (
 
         // Create the model
         try {
-            imageModelClassifier = createFromFileAndOptions(context, correspondingModels, imageClassifierOptions.build())
+            imageModelClassifier = createFromFileAndOptions(context, correspondingModels,
+                imageClassifierOptions.build())
         }
         catch (e : IllegalStateException)
         {
