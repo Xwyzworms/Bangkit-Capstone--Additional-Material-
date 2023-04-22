@@ -13,11 +13,8 @@ import org.tensorflow.lite.gpu.CompatibilityList
 import org.tensorflow.lite.gpu.GpuDelegate
 import org.tensorflow.lite.nnapi.NnApiDelegate
 import android.graphics.Bitmap
-import android.provider.ContactsContract.Data
 import android.util.Log
-import android.widget.Toast
 import org.tensorflow.lite.DataType
-import org.tensorflow.lite.schema.TensorType
 import org.tensorflow.lite.support.common.TensorProcessor
 import org.tensorflow.lite.support.common.ops.CastOp
 import org.tensorflow.lite.support.common.ops.DequantizeOp
@@ -32,6 +29,8 @@ import java.io.InputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.channels.FileChannel
+import java.util.*
+import kotlin.math.max
 
 class ImageClassifierRaw(private var context : Context,
                          private var modelPath : String,
@@ -121,6 +120,7 @@ class ImageClassifierRaw(private var context : Context,
                 .add(QuantizeOp(mobileNet_InputZeropoints, mobileNet_InputScales))
                 .add(CastOp(DataType.UINT8))
                 .build()
+
         } else {
             ImageProcessor.Builder()
                 .add(ResizeOp(inputSize.height, inputSize.width, ResizeOp.ResizeMethod.BILINEAR))
@@ -130,8 +130,7 @@ class ImageClassifierRaw(private var context : Context,
         }
 
     }
-    private fun handlerPredictionBuffer(predBuffer: FloatArray) : List<DefaultCategoryImageClassification>
-    {
+    private fun handlerPredictionBuffer(predBuffer: FloatArray) : DefaultCategoryImageClassification {
 
         // Later, i need to understand a bc d e f g first
         //
@@ -139,9 +138,28 @@ class ImageClassifierRaw(private var context : Context,
         /*
         * 1. Get resutls from predictions
         * 2. Applied the associatedLabels for each predictions
-        * 3. return as List<Default...>
+        * 3. return the max
         * */
-        return arrayListOf()
+
+        var maxDefault : DefaultCategoryImageClassification = DefaultCategoryImageClassification("-",0f,0)
+
+        for(pred in predBuffer.indices)
+        {
+            if(predBuffer[pred] > maxDefault.score)
+            {
+                maxDefault =  parseToDefault(pred, predBuffer[pred])
+            }
+        }
+
+        return maxDefault
+    }
+
+    private fun parseToDefault(contentIndx : Int, contentScore : Float) : DefaultCategoryImageClassification
+    {
+        val modifiedContent : DefaultCategoryImageClassification =
+            DefaultCategoryImageClassification(associatedLabels[contentIndx],if (contentScore > 100f)
+            contentScore else contentScore,contentIndx)
+        return modifiedContent
     }
 
     private fun scaledBitmap(bitmap: Bitmap): ByteBuffer {
@@ -170,26 +188,19 @@ class ImageClassifierRaw(private var context : Context,
         }
         return byteBuffer
     }
-    fun classifyImage(bitmap : Bitmap) : List<DefaultCategoryImageClassification>
-    {
+    fun classifyImage(bitmap: Bitmap): DefaultCategoryImageClassification {
         setupImageProcessor()
-        var tensorImage = if(isQuantizedModel) TensorImage(DataType.UINT8) else TensorImage(DataType.FLOAT32)
+        var tensorImage =
+            if (isQuantizedModel) TensorImage(DataType.UINT8) else TensorImage(DataType.FLOAT32)
 
         tensorImage.load(bitmap)
+
         tensorImage = imageProcessor.process(tensorImage)
 
-        if(isQuantizedModel)
-        {
-            val tensorProcessor = TensorProcessor.Builder()
-                .add(DequantizeOp(mobileNet_OutputZeropoints, mobileNet_OutputScales))
-                .build()
-
-           // predictionsBuffer = tensorProcessor.process(predictionsBuffer)
-        }
         var predictionBuffer = TensorBuffer.createFixedSize(outputSize, DataType.UINT8)
-            interpreter.run(tensorImage.buffer, predictionBuffer.buffer )
-        val arrayOfResults : List<DefaultCategoryImageClassification> = handlerPredictionBuffer(predictionBuffer.floatArray)
-        return arrayOfResults
+
+        interpreter.run(tensorImage.buffer, predictionBuffer.buffer)
+        return handlerPredictionBuffer(predictionBuffer.floatArray)
     }
     private fun setupModel()
     {
