@@ -1,0 +1,4 @@
+Input Scales 0.0078125
+Input Zeropoints 128
+Output Scales 0.00390625
+Output Zeropoints 0

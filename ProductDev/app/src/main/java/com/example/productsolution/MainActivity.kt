@@ -88,7 +88,8 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private val REQUIRED_PERMISSION : Array<String> = mutableListOf(
-            android.Manifest.permission.CAMERA
+            android.Manifest.permission.CAMERA,
+            android.Manifest.permission.READ_EXTERNAL_STORAGE
         ).toTypedArray()
     }
 }

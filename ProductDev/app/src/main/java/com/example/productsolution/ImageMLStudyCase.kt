@@ -75,15 +75,17 @@ class ImageMLStudyCase : AppCompatActivity() {
         val am : AssetManager = this.assets
         val textInputStream : InputStream = am.open(DEFAULT_LABEL_TEST)
 
-        val imgModelTaskVision = ImageClassifierModelTaskVision(DEFAULT_THRESHOLD, DEFAULT_THREADS,
-            DEFAULT_MAXRESULTS, DEFAULT_LABEL_TEST ,DEFAULT_MODEL_TEST, this, DEFAULT_DELEGATE)
+        //val imgModelTaskVision = ImageClassifierModelTaskVision(DEFAULT_THRESHOLD, DEFAULT_THREADS,
+        //    DEFAULT_MAXRESULTS, DEFAULT_LABEL_TEST ,DEFAULT_MODEL_TEST, this, DEFAULT_DELEGATE)
+
         val imgModelRaw : ImageClassifierRaw = ImageClassifierRaw(this,
             DEFAULT_MODEL_TEST, DEFAULT_LABEL_TEST, DEFAULT_THRESHOLD,
             DEFAULT_DELEGATE, DEFAULT_QUANTIZED, DEFAULT_INPUT_SIZE,
             DEFAULT_OUTPUT_SIZE
             )
-        val result = imgModelTaskVision.classify(binding.ivContent.drawable.toBitmap(), (getSystemService(
-            WINDOW_SERVICE) as WindowManager).defaultDisplay.rotation)
+        val result = imgModelRaw.classifyImage(binding.ivContent.drawable.toBitmap())
+        //val result = imgModelTaskVision.classify(binding.ivContent.drawable.toBitmap(), (getSystemService(
+        //    WINDOW_SERVICE) as WindowManager).defaultDisplay.rotation)
         Toast.makeText(this, result.toString(), Toast.LENGTH_SHORT).show()
     }
 
@@ -207,7 +209,7 @@ class ImageMLStudyCase : AppCompatActivity() {
         const val DEFAULT_MAXRESULTS : Int = 1
         const val DEFAULT_DELEGATE : Int = 0
         val DEFAULT_INPUT_SIZE : Size = Size(224, 224)
-        val DEFAULT_OUTPUT_SIZE : IntArray = intArrayOf(1, 224, 224)
+        val DEFAULT_OUTPUT_SIZE : IntArray = intArrayOf(1, 1001)
         const val DEFAULT_QUANTIZED : Boolean = true
         const val DEFAULT_LABEL_TEST : String = "labels_mobilenet_quant_v1_224.txt"
         const val DEFAULT_MODEL_TEST : String = "mobilenet_v1_1.0_224_quant.tflite"
