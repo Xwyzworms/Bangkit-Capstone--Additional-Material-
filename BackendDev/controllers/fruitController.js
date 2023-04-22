@@ -1,31 +1,170 @@
-const FruitDum = require("../models/fruit");
+const {FruitDum} = require("../models/fruit");
 const multer = require("multer");
 const upload = multer();
 
-const newFruit = (req, res, next) => {
+let storage;
+let uploadImage;
 
-    res.json({message : "Post new fruit"})
+
+function defineStorage() 
+{
+    storage = multer.diskStorage({
+        destination : (req, file, cb)=> {
+            cb(null, "./uploads")
+        },
+        filename : (req, file, cb) => {
+            cb(null, file.originalname)
+        }
+    })
+
+    uploadImage = multer({storage : storage}).single('image')
+}
+
+defineStorage();
+
+
+function defineNewFruitAddHandler(req, res) 
+{
+
+    const newFruit = new FruitDum({
+            name : req.body.name,
+            image : req.file.path,
+            description : req.body.description
+    })
+    newFruit.save().then(result => {
+        return res.json({
+            "success" : true,
+            "message" : "Data has been saved"
+        })
+    }).catch(error => {
+        return res.json( {
+            "success" : false,
+            "message" : error
+        })
+    }) 
+}
+
+function defineNewFruitAddHandlerExist() 
+{
+    return {
+        "success" : false,
+        "message" : "Data is exist"
+    }
+}
+
+function defineNewFruitErrorHandler(error) 
+{
+    return {
+        "success" : false,
+        'error' : error
+    }   
+}
+
+// TODO 
+// FIX YOUR CODE, CLEAN IT UP
+const newFruit = (req, res) => {
+    FruitDum.findOne({name : req.body.name}).then(data => {
+        if(data == null) 
+        {        
+            return defineNewFruitAddHandler(req, res);       
+        }
+        else 
+        {
+            return res.json(defineNewFruitAddHandlerExist());
+        }
+
+    }).catch(error => {
+        return res.json(defineNewFruitErrorHandler(error));
+    }) 
 }
 
 const getFruits = (req, res, next) => 
 {
-    res.json({message : "Get all fruits"});
+    FruitDum.find({}).then(result => {
+        if(result) 
+        {
+            return res.json({
+                "success" : true,
+                "message" : "Successfully get data",
+                "content" : result
+            });
+        }
+        return res.json({
+           "success" : false,
+           "message" : "Failed to get the data",
+           "content" : result 
+        })
+    }).catch(error => {
+        return res.json({
+            "success" : false,
+            "message" : error
+        })
+    })
 }
-
 const deleteFruits = (req, res, next) => {
-    res.json({message : "Delete all fruits"});
+    FruitDum.deleteMany({}).then(result => {
+        return res.json({
+            "success" : true,
+            "message" : "Success fully delete all fruits"
+        })
+
+    }).catch(error => {
+        return res.json("ERROR ",  error)
+    })
 }
 
 const deleteFruitByName = (req, res, next) => {
-    res.json({message : "Gladly i delete you"} );
+    
+    const {nameParams} = req.params.name;
+
+    FruitDum.deleteOne({name : nameParams}).then(result => {
+        if(result) 
+        {
+           return res.json({
+            "success" : true,
+            "message" : `Successfully delete ${nameParams}`
+           })
+        }
+        else 
+        {
+           return res.json({
+            "success" : false,
+            "message" : `name => ${nameParams} not found`
+           })
+        }
+        
+    }).catch( error => {
+        return res.json({"success" : false,
+                        "message" : error});
+    })
 }
 
 const getFruitByName = (req, res, next) => {
-    res.json({message : "All right then i get the fruit"});
-}
+    const nameParams = req.params.name;
+    FruitDum.findOne({name : nameParams}).then(result => {
+        console.log(result)
+        if(!result.$isEmpty()) 
+        {
+            return res.json({
+                "success" : true,
+                "message" : "Successfully getting the data",
+                "content" : result
+            });
+        }
+        else 
+        {
+            return res.json({
+                "success" : true,
+                "message" : "Successfully getting the data",
+                "content" : result
+            });
+        }
+    }).catch( error => {
 
-const uploadFruitImage = (req, res, next) => {
-    res.json({message : "Someee shitt goess brr"});
+        return res.json({"success" : false,
+                         "message" : error})
+    })
+
 }
 
 const doSomeMLShit = (req, res, next) => {
@@ -33,4 +172,5 @@ const doSomeMLShit = (req, res, next) => {
 }
 
 module.exports = {newFruit, getFruits, deleteFruits,
-                 deleteFruitByName,getFruitByName, uploadFruitImage, doSomeMLShit};
+                 deleteFruitByName,getFruitByName, 
+                 uploadImage, doSomeMLShit};

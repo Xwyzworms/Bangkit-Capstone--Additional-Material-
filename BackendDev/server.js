@@ -2,19 +2,22 @@ const express = require("express");
 const dotenv = require('dotenv');
 const path = require("path");
 const app = express();
+const mongoose = require("mongoose");
 const routes = require("./routes/fruitHandler");
 dotenv.config();
 const {loadPyodide} = require("pyodide");
 const fetch = require("node-fetch");
 const https = require("https");
 
-const imagePredictionHandlerURL  = "http://localhost:3000/util/ImagePredictionHandler.py"
-const hoaxPredictionHandlerURL =  "http://localhost:3000/util/HoaxPredictionHandler.py"
+const imagePredictionHandlerURL  = process.env.IMAGEPREDICTION_URL
+const hoaxPredictionHandlerURL =  process.env.TEXTPREDICTION_URL
+
 
 async function main () {
     let pyodide = await loadPyodide();
     await pyodide.loadPackage("numpy");
-    await pyodide.loadPackage("pandas");
+    //await pyodide.loadPackage("pandas");
+    await pyodide.loadPackage("pillow");
 
     //const responseImageDetection = await fetch(imagePredictionHandlerURL);
     //pythonScript = (pyodide.runPython(await responseImageDetection.text()))
@@ -37,9 +40,12 @@ async function prepareHoaxDetectionScript()
     return modulePy
 }
 
-const mainPyodide = main();
-const moduleFruitDetection = prepareFruitDetectionScript();
-const moduleHoaxDetection = prepareHoaxDetectionScript();
+const mainPyodide = null//main();
+const moduleFruitDetection =null// prepareFruitDetectionScript();
+const moduleHoaxDetection = null//prepareHoaxDetectionScript();
+
+mongoose.connect(process.env.MONGODB_URI)
+
 
 app.use(express.json()) // parses requests with JSON payloads ( jadi bentuk json )
 
