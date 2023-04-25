@@ -65,4 +65,25 @@
         app:layout_constraintEnd_toEndOf="parent"
         />
 
+    <Button
+        android:id="@+id/btn_api_getFruits"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Get Fruits"
+
+        app:layout_constraintTop_toBottomOf="@id/btn_api_addfruit"
+        app:layout_constraintStart_toStartOf="@id/btn_api_addfruit"
+        />
+
+    <Button
+
+        android:id="@+id/btn_api_deleteFruits"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Delete Fruits"
+
+        app:layout_constraintStart_toEndOf="@id/btn_api_getFruits"
+        app:layout_constraintEnd_toEndOf="@id/btn_api_addfruit"
+        app:layout_constraintTop_toBottomOf="@id/btn_api_addfruit"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>
