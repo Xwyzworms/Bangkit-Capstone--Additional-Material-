@@ -8,24 +8,61 @@
     tools:context=".imageStudyCases.MainMLApiActivity">
 
     <TextView
-        android:id="@+id/tv_fruitName"
+        android:id="@+id/tv_title_fruitName"
         android:layout_width="wrap_content"
-        android:layout_he ight="wrap_content"
-        android:text="Jeruk"
-
+        android:layout_height="wrap_content"
+        android:text="Nama Buah :"
 
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />
 
     <TextView
+        android:id="@+id/tv_fruitName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Jeruk"
+
+        app:layout_constraintStart_toEndOf="@id/tv_title_fruitName"
+        app:layout_constraintTop_toTopOf="@id/tv_title_fruitName"
+        />
+
+    <TextView
+        android:id="@+id/tv_title_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Deskripsi Buah : "
+        app:layout_constraintTop_toBottomOf="@id/tv_title_fruitName"
+        app:layout_constraintStart_toStartOf="@id/tv_title_fruitName"
+        />
+
+    <TextView
         android:id="@+id/tv_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Some Description"
-
-
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:text="Deskripsi Buah : "
+        app:layout_constraintStart_toEndOf="@id/tv_title_description"
+        app:layout_constraintTop_toTopOf="@id/tv_title_description"
         />
+
+    <ImageView
+        android:id="@+id/iv_imageContent"
+        android:layout_width="0dp"
+        android:layout_height="320dp"
+        android:src="@drawable/apricot_0"
+        app:layout_constraintStart_toStartOf="@id/tv_title_description"
+        app:layout_constraintTop_toBottomOf="@id/tv_title_description"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    <Button
+        android:id="@+id/btn_api_addfruit"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="POST_ADD"
+        app:layout_constraintTop_toBottomOf="@id/iv_imageContent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
