@@ -167,10 +167,45 @@ const getFruitByName = (req, res, next) => {
 
 }
 
+const addFruitWOImage = (req, res) => {
+    const nameParams = req.body.name
+    
+    FruitDum.findOne({name : nameParams}).then(data => {
+        if(data == null) {
+            return defineAddFruitWOImage(req, res);
+        }
+        else {
+          return res.json(defineNewFruitAddHandlerExist());
+        }
+    }).catch(error => {
+        return res.json(defineNewFruitErrorHandler(error))
+    })
+}
+function defineAddFruitWOImage(req, res) 
+{      
+    const newFruit = new FruitDum({
+      name : req.body.name,
+      image : null,
+      description : req.body.description  
+    })
+
+    newFruit.save().then(result => {
+        return res.json({
+            "success" : true,
+            "message" : "Data has been saved"
+        })
+    }).catch(error =>{
+        return res.json({
+            "success" : false,
+            "message" : error
+        })
+    })
+}
+
 const doSomeMLShit = (req, res, next) => {
     res.json({message : "ML goes brrr"});
 }
 
 module.exports = {newFruit, getFruits, deleteFruits,
                  deleteFruitByName,getFruitByName, 
-                 uploadImage, doSomeMLShit};
+                 uploadImage, doSomeMLShit, addFruitWOImage};
