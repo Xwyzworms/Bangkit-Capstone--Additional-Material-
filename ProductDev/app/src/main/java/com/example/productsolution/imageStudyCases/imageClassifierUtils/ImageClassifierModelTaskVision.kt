@@ -75,7 +75,6 @@ class ImageClassifierModelTaskVision (
                         cat.score,
                         cat.index)
                 )
-
             }
         }
         return mutableParseOutputs

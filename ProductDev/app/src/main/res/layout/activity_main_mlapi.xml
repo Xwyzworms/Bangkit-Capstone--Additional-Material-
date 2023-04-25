@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="20dp"
+    tools:context=".imageStudyCases.MainMLApiActivity">
+
+    <TextView
+        android:id="@+id/tv_title_fruitName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nama Buah :"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/tv_fruitName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Jeruk"
+
+        app:layout_constraintStart_toEndOf="@id/tv_title_fruitName"
+        app:layout_constraintTop_toTopOf="@id/tv_title_fruitName"
+        />
+
+    <TextView
+        android:id="@+id/tv_title_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Deskripsi Buah : "
+        app:layout_constraintTop_toBottomOf="@id/tv_title_fruitName"
+        app:layout_constraintStart_toStartOf="@id/tv_title_fruitName"
+        />
+
+    <TextView
+        android:id="@+id/tv_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Deskripsi Buah : "
+        app:layout_constraintStart_toEndOf="@id/tv_title_description"
+        app:layout_constraintTop_toTopOf="@id/tv_title_description"
+        />
+
+    <ImageView
+        android:id="@+id/iv_imageContent"
+        android:layout_width="0dp"
+        android:layout_height="320dp"
+        android:src="@drawable/apricot_0"
+        app:layout_constraintStart_toStartOf="@id/tv_title_description"
+        app:layout_constraintTop_toBottomOf="@id/tv_title_description"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    <Button
+        android:id="@+id/btn_api_addfruit"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="POST_ADD"
+        app:layout_constraintTop_toBottomOf="@id/iv_imageContent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    <Button
+        android:id="@+id/btn_api_getFruits"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Get Fruits"
+
+        app:layout_constraintTop_toBottomOf="@id/btn_api_addfruit"
+        app:layout_constraintStart_toStartOf="@id/btn_api_addfruit"
+        />
+
+    <Button
+
+        android:id="@+id/btn_api_deleteFruits"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Delete Fruits"
+
+        app:layout_constraintStart_toEndOf="@id/btn_api_getFruits"
+        app:layout_constraintEnd_toEndOf="@id/btn_api_addfruit"
+        app:layout_constraintTop_toBottomOf="@id/btn_api_addfruit"
+        />
+</androidx.constraintlayout.widget.ConstraintLayout>
