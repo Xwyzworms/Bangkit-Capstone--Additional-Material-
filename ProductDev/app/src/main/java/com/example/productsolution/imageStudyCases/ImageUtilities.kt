@@ -31,7 +31,7 @@ fun scaleBitmapDown(bitmap : Bitmap, maxDimension : Int) : Bitmap
         // Trying to make the scaler same as before
         // 480 * 320
         desiredHeight = maxDimension
-        val scaler = (originalWidth.toFloat() / originalHeight.toFloat()).toInt()
+        val scaler = (originalHeight.toFloat() / originalWidth.toFloat()).toInt()
         desiredWidth = (desiredHeight * scaler) // Rumus untuk retain but memperkecil
     }
     else if(originalHeight < originalWidth)

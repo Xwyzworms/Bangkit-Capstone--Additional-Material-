@@ -17,6 +17,7 @@ import androidx.camera.core.*
 import androidx.camera.core.ImageCapture.OnImageCapturedCallback
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
+import java.util.zip.Deflater
 
 class CameraXActivity : AppCompatActivity() {
     private lateinit var binding : ActivityCameraXactivityBinding
@@ -48,7 +49,7 @@ class CameraXActivity : AppCompatActivity() {
                 if(img != null)
                 {
                     val byteArray : ByteArray = prepareImageByteArray(
-                        scaleBitmapDown(convertImageToBitmap(img),224))
+                        scaleBitmapDown(convertImageToBitmap(img),320))
                     //val byteArray : ByteArray = prepareImageByteArray(provideDummyBitmap())
                     sendToLauncher(byteArray)
                 }
@@ -60,19 +61,24 @@ class CameraXActivity : AppCompatActivity() {
             }
         })
     }
+
     private fun provideDummyBitmap() :Bitmap
     {
         return BitmapFactory.decodeResource(baseContext.resources, com.example.productsolution.R.drawable.apricot_0)
     }
     private fun convertImageToBitmap(image : Image) :Bitmap
     {
-        val byteBuffer : ByteBuffer = image.planes[0].buffer
+        var byteBuffer : ByteBuffer = image.planes[0].buffer //YUV representation
+        val byteArray : ByteArray = ByteArray(byteBuffer.remaining())
 
-        val capacity : ByteArray = ByteArray(byteBuffer.capacity())
+        byteBuffer.get(byteArray)
 
-        byteBuffer.get(capacity) // Basically copy to capacity
+        val  outputStream : ByteArrayOutputStream = ByteArrayOutputStream()
 
-        return BitmapFactory.decodeByteArray(capacity, 0, capacity.size, null)
+        val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputStream)
+
+        return BitmapFactory.decodeByteArray(outputStream.toByteArray(), 0, outputStream.size())
 
     }
     private fun prepareImageByteArray(image : Bitmap) : ByteArray
