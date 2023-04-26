@@ -5,6 +5,7 @@
 */
 package com.example.productsolution.imageStudyCases
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.example.productsolution.generalUtils.Fruit
@@ -16,6 +17,7 @@ class MainMLApiViewModel(private val mainRepository: MainRepository) : ViewModel
 {
     fun getAllFruits() : LiveData<NetworkClass<FruitResponse>>
     {
+        Log.d("BROO" , "all fruit")
         return mainRepository.getFruits()
     }
 

@@ -2,14 +2,17 @@ package com.example.productsolution.imageStudyCases
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.productsolution.databinding.ActivityMainMlapiBinding
 import com.example.productsolution.generalUtils.MainRepository
+import com.example.productsolution.generalUtils.NetworkClass
 
 class MainMLApiActivity : AppCompatActivity() {
     private lateinit var binding : ActivityMainMlapiBinding
-    private lateinit var factory : ViewModelProvider.Factory
+    private lateinit var factory : ImageMLViewModelFactory
     private lateinit var viewModel : MainMLApiViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,19 +31,27 @@ class MainMLApiActivity : AppCompatActivity() {
 
 
         binding.btnApiGetFruits.setOnClickListener {
+            Toast.makeText(this, "Bro", Toast.LENGTH_SHORT).show()
             getFruitHandler()
         }
 
-        binding.btnApiGetFruits.setOnClickListener {
-            deleteFruitHandler()
-        }
     }
     private fun addFruitHandler() {
         // TODO later
     }
 
     private fun getFruitHandler() {
-        viewModel.getAllFruits()
+        Log.d("BROO", "ANJAY")
+        viewModel.getAllFruits().observe(this) {
+            when (it) {
+                is NetworkClass.Success -> {
+                    Toast.makeText(this, it.data.toString(), Toast.LENGTH_SHORT).show()
+                }
+                else -> {
+                    Toast.makeText(this, "error", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
     private fun deleteFruitHandler() {
         viewModel.deleteAllFruits()

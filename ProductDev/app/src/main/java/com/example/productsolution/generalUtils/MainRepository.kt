@@ -5,6 +5,8 @@
 */
 package com.example.productsolution.generalUtils
 
+import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import kotlinx.coroutines.Dispatchers
@@ -13,6 +15,7 @@ import retrofit2.Response
 class MainRepository {
     fun getFruits() : LiveData<NetworkClass<FruitResponse>>
     {
+        Log.d("BROO", "getFruits ada kok")
         val fruits : LiveData<NetworkClass<FruitResponse>> =  liveData(
             context = Dispatchers.IO,
             block = {
@@ -33,7 +36,6 @@ class MainRepository {
                 }catch (e : Exception)
                 {
                     emit(NetworkClass.Error("Error : ${e.message}", 404, ))
-
                 }
             }
         )
