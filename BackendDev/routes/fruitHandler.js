@@ -10,7 +10,7 @@ const upload = multer();
 router.get("/fruit",fruitController.getFruits);
 router.post("/fruit", fruitController.uploadImage,fruitController.newFruit);
 router.delete("/fruit", fruitController.deleteFruits);
-
+router.post("/fruitWo", upload.none(), fruitController.addFruitWOImage)
 router.get("/fruit/:name", fruitController.getFruitByName);
 router.delete("/fruit/:name", fruitController.deleteFruitByName);
 

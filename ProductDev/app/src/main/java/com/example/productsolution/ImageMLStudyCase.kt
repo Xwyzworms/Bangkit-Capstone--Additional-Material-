@@ -19,6 +19,7 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.core.graphics.drawable.toBitmap
+import com.example.productsolution.imageStudyCases.MainMLApiActivity
 import com.example.productsolution.imageStudyCases.imageClassifierUtils.ImageClassifierRaw
 import com.example.productsolution.imageStudyCases.imageClassifierUtils.ImageClassifierModelTaskVision
 import java.io.InputStream
@@ -55,6 +56,12 @@ class ImageMLStudyCase : AppCompatActivity() {
 
         binding.btnPredict.setOnClickListener {
             predictHandler()
+        }
+
+        binding.btnApiTest.setOnClickListener {
+            val intent : Intent = Intent(this, MainMLApiActivity::class.java)
+            startActivity(intent)
+
         }
 
     }
