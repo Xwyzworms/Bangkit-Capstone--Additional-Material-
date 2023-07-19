@@ -14,7 +14,7 @@ router.post("/fruitWo", upload.none(), fruitController.addFruitWOImage)
 router.get("/fruit/:name", fruitController.getFruitByName);
 router.delete("/fruit/:name", fruitController.deleteFruitByName);
 
-router.post("/MLFruit", fruitController.doSomeMLShit);
+router.post("/MLFruit", fruitController.uploadImage,fruitController.doSomeMLShit);
 
 
 
