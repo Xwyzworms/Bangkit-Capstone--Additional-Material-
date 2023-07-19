@@ -207,7 +207,9 @@ class ImageClassifierRaw(private var context : Context,
         val fileDescriptor = assetManager.openFd(modelPath)
         val inputStream = FileInputStream(fileDescriptor.fileDescriptor)
         val fileChannel = inputStream.channel
-        interpreter = Interpreter(fileChannel.map(FileChannel.MapMode.READ_ONLY, fileDescriptor.startOffset, fileDescriptor.declaredLength),interpreterOptions)
+        interpreter = Interpreter(fileChannel.map(FileChannel.MapMode.READ_ONLY,
+                                fileDescriptor.startOffset,
+                                fileDescriptor.declaredLength),interpreterOptions)
 
     }
 
