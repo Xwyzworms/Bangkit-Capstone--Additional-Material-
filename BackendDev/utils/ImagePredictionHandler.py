@@ -1,14 +1,28 @@
 import numpy as np
-import PIL
+from PIL import Image
+from typing import List, Dict, Tuple
+import os
+
+### CONSTANTS ###
+HEIGHT_SIZE_MODEL_FRUIT : int  = 224
+WIDTH_SIZE_MODEL_FRUIT  : int  = 224
+MODEL_FRUIT_NAME : str = "mobilenet_v1_1.0_224_quant.tflite"
+### CONSTANTS ###
 
 def readImage(filename : str):
-    print(f"readImage {filename}")
+    image = Image.open(filename)
+    return image    
 
-def preprocessingImage():
-    print("1. preprocessing image")
+def preprocessingImage(img : Image):
+    print("3.prepareModel")
+    img = img.resize((HEIGHT_SIZE_MODEL_FRUIT, WIDTH_SIZE_MODEL_FRUIT))
+    img /= .255 # 0 - 1 Normalizing
+    return img
     
 def prepareModel():
-    print("3.prepareModel")
+    ...
+
+
 
 def doPrediction():
     print("4.Prediction")

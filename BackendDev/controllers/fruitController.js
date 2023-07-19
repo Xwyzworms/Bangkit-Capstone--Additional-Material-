@@ -1,6 +1,9 @@
 const {FruitDum} = require("../models/fruit");
+const { mainPyodide,moduleFruitDetection, moduleHoaxDetection } = require("../server");
 const multer = require("multer");
 const upload = multer();
+const path = require('path');
+const fs = require("fs");
 
 let storage;
 let uploadImage;
@@ -203,7 +206,23 @@ function defineAddFruitWOImage(req, res)
 }
 
 const doSomeMLShit = (req, res, next) => {
-    res.json({message : "ML goes brrr"});
+    const filePath = req.file.path;
+    if(fs.existsSync(filePath)) {
+        moduleFruitDetection.then( (main) => {
+            main(filePath)
+        })
+        return res.json({
+            "success" : true,
+            "message" : "File terbaca"
+        })
+    }
+    else {
+        return res.json({
+            "success" : true,
+            "message" : "File tidak terbaca"
+        })
+    }
+    
 }
 
 module.exports = {newFruit, getFruits, deleteFruits,
